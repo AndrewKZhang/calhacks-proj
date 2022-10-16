@@ -13,10 +13,10 @@ class AirlineResult:
 
     
     # if the length is larger than 0, meaning layovers is happenning
-    first_trip: Union[SingleAirlineResult]
+    first_trip: list[SingleAirlineResult]
 
     # same as above 
-    second_trp: Union[SingleAirlineResult]
+    second_trp: list[SingleAirlineResult]
 
     # set based on if the first trip and second is in same airline
     is_roundtrip: bool
