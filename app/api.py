@@ -1,9 +1,12 @@
+import imp
 import os
-from app.controller.TravelProject import get_data
+
+from app.controller.utils import get_data
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from datetime import datetime
 from app.config import DevelopmentConfig
+from app.controller.tranvelInfo import calculateTravelInfo
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -13,9 +16,10 @@ app.config.from_object(DevelopmentConfig)
 def hello():
     return "Hello world"
 
-@app.route("/travel_info/origin/<origin>/destination/<destination>/start_date/<start_date>/end_date/<end_date>")
-def travelInfo(origin, destination, start_date, end_date):
+@app.route("/travel_info/<origin>/<destination>/<start_date>/<end_date>/<duration>")
+def travelInfo(origin, destination, start_date, end_date, duration):
     itineraryType = "ROUND_TRIP"
     classOfService = "ECONOMY"
-    return get_data(origin, destination, start_date, itineraryType, classOfService, end_date)
+    # convert to json
+    return calculateTravelInfo(start_date, end_date, duration, origin, destination), 200
 
