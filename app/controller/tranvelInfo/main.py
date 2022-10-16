@@ -1,9 +1,7 @@
 from ctypes import Union
 from nntplib import NNTPDataError
 from typing import NamedTuple
-from unittest import result
-
-from calhacks-proj.app.controller.utils import get_hotel_data
+from app.controller.utils import get_data
 from app.model.AirlineResult import AirlineResult
 from app.model.HotelResult import HotelResult
 import datetime
@@ -16,10 +14,10 @@ class TravelInfoResult(NamedTuple):
     TravelInfo for a given duration from a date range
     """
     # the Data for the entire AirlineResults
-    airline_results: Union[AirlineResult]
+    airline_results: list[AirlineResult]
 
     # the data for the entire Hotel results in this duration
-    hotel_results: Union[HotelResult]
+    hotel_results: list[HotelResult]
 
     # the data for the combination of lowest hotel and airline result
     min_price: float
@@ -49,6 +47,18 @@ def calculateTravelInfo(start_date, \
         None,
         None
     )
+
+def processAirLineData(object):
+    result = []
+    flights = {}
+    if "data" in object and "flight" in object["data"]:
+        flights = object["data"]["flight"]
+    for i in range(len(flights)):
+        singleAirlineResult = processRoundAirLineData(flights[str(i)])
+        result.append(singleAirlineResult)
+
+def processRoundAirLineData(object):
+    return None
     
 def calculateSingleRoundAirInfo(start_date, end_date, start_airport, end_airport) -> AirlineResult:
     # TODO calculate single round info based on inputs
@@ -56,6 +66,10 @@ def calculateSingleRoundAirInfo(start_date, end_date, start_airport, end_airport
     # TODO 2. correctly populate SingleAirLineResult here in a helper method
     # TODO OR write a helper method in the constructor
     # TODO 3. put them together and returns to the calculateTracelInfo
+    itineraryType = "ROUND_TRIP"
+    classOfService = "ECONOMY"
+    result = processAirLineData(get_data(start_airport, end_airport, start_date, itineraryType, classOfService, end_date))
+
     return None
 
 def calculateSingleRoundHotelResult(start_date, end_date, city) -> HotelResult:

@@ -6,7 +6,7 @@ from flask import Flask, render_template, request
 from flask_cors import CORS
 from datetime import datetime
 from app.config import DevelopmentConfig
-from app.controller.tranvelInfo import calculateTravelInfo
+from app.controller.tranvelInfo.main import calculateTravelInfo
 
 app = Flask(__name__)
 cors = CORS(app)
