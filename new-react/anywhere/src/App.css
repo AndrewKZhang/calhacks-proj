@@ -4,6 +4,8 @@
   height: 100vh;
   display: flex;
   align-items: center;
+  align-content: center;
+  align-self: center;
   flex-direction: column;
   font-family: "Nunito", sans-serif;
   background-image: url("background.JPG");

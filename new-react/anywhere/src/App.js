@@ -14,7 +14,7 @@ function App() {
       <Header />
       <SearchBar placeholder="Enter your origin..." data={PlaceData}/>
       <SearchBar placeholder="Enter your destination..." data={PlaceData}/>
-      <DatePicker 
+      {/* <DatePicker 
       selected={selectedDate} 
       onchange={date =>setSelectedDate(date)} 
       dateFormat = 'yyyy/MM/dd'
@@ -23,7 +23,7 @@ function App() {
       showYearDropdown
       scrollableYearDropdown
       scrollableMonthYearDropdown
-      />
+      /> */}
 
 
     </div>
