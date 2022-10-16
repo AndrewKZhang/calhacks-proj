@@ -1,5 +1,7 @@
 from ctypes import Union
+from datetime import timedelta
 from nntplib import NNTPDataError
+from time import strftime, strptime
 from typing import NamedTuple
 from app.controller.utils import get_data
 from app.model.AirlineResult import AirlineResult
@@ -12,10 +14,10 @@ class TravelInfoResult(NamedTuple):
     TravelInfo for a given duration from a date range
     """
     # the Data for the entire AirlineResults
-    airline_results: list[AirlineResult]
+    airline_results: list[list[AirlineResult]]
 
     # the data for the entire Hotel results in this duration
-    hotel_results: list[HotelResult]
+    hotel_results: list[list[HotelResult]]
 
     # the data for the combination of lowest hotel and airline result
     min_price: float
@@ -27,6 +29,17 @@ class TravelInfoResult(NamedTuple):
 def calculateTravelInfo(start_date, \
     end_date, duration, start_airport, end_airport):
     # TODO: 1. transform the date objects so that we can loop date range candidates
+    start_date = strptime(start_date, "%Y-%M-%D")
+    end_date = strptime(end_date, "%Y-%M-%D")
+    duration = int(duration)
+    airline_results = []
+    hotel_results = []
+    for start_date in range(start_date, start_date + timedelta(days=duration), timedelta(days=1)):
+        start_str = start_date.strftime("%Y-%M-%D")
+        end_str = end_date.strftime("%Y-%M-%D")
+        airline_results.append(calculateSingleRoundAirInfo(start_str, end_str, start_airport, end_airport))
+        # might be wrong because of city format
+        hotel_results.append(calculateSingleRoundHotelResult(start_str, end_str, end_airport))
     # TODO: 2. loop through the candidate windows and call the helper methods defined below
     # TODO: 3. Put them together into the ResultPObject defined above
     # TODO: 4. perform analysis and 
@@ -36,8 +49,8 @@ def calculateTravelInfo(start_date, \
     # TODO: add flags to track if user only wants hotel or airline only
     # Note we only have 20 api calls for free user, upgrade or create another account
     return TravelInfoResult(
-        None,
-        None,
+        airline_results,
+        hotel_results,
         None,
         None
     )
