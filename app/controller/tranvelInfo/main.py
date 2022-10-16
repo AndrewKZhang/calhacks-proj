@@ -6,6 +6,8 @@ from typing import NamedTuple
 from app.controller.utils import get_data
 from app.model.AirlineResult import AirlineResult
 from app.model.HotelResult import HotelResult
+import datetime
+from utils import search_location
 
 
 class TravelInfoResult(NamedTuple):
@@ -48,6 +50,9 @@ def calculateTravelInfo(start_date, \
     # then return it to the entry point
     # TODO: add flags to track if user only wants hotel or airline only
     # Note we only have 20 api calls for free user, upgrade or create another account
+
+
+
     return TravelInfoResult(
         airline_results,
         hotel_results,
@@ -82,6 +87,34 @@ def calculateSingleRoundAirInfo(start_date, end_date, start_airport, end_airport
 def calculateSingleRoundHotelResult(start_date, end_date, city) -> HotelResult:
     # TODO 1. make sure the city is in GeoId format,
     #  either by calling search_location api or find another way
+    returns = []
+    result = search_location(city)
+    if "data" in result and "0" in result["data"] and "documentId" in result["data"]["0"]:
+        GeoId = result["data"]["0"]["documentId"]
+    else:
+        return None
+
     # TODO 2. call the hotel api in the utils.py
+    hotel_api = get_hotel_data(start_date, end_date)
+    datas = {}
+    if "data" in hotel_api and "data" in hotel_api["data"]:
+        datas = hotel_api["data"]["data"]
+    else:
+        return None
+    for i in range(len(datas)):
+        returns.append(hotelHelper(datas[str(i)]))
+
     # TODO 3. populate the HotelResult object and returns it
-    return None
+    return returns
+
+def hotelHelper(object):
+    result = HotelResult()
+    result.id = object["id"]
+    result.title = object["title"]
+    result.primary_info = object["primaryInfo"]
+    result.secondary_info = object["secondaryInfo"]
+    result.is_sponsored = object["isSponsored"]
+    result.provider = object["provider"]
+    result.price_detailed = object["priceDetails"]
+    result.price_for_display = object["priceForDisplay"]
+    return result
